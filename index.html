@@ -252,7 +252,7 @@
 
   /* ---------- Today's Priorities ---------- */
   .priorities-card {
-    margin-bottom: 16px;
+    margin-top: 16px;
   }
 
   .priorities-list {
@@ -563,6 +563,17 @@
   .pill-red { background: var(--red-bg); color: var(--red); }
   .pill-zero { background: transparent; color: var(--text-faint); }
 
+  /* Lead count cells - subtle red emphasis on 0-leads */
+  td.lead-zero {
+    color: var(--red);
+    font-weight: 600;
+  }
+
+  td.lead-zero.dim {
+    color: var(--text-faint);
+    font-weight: 400;
+  }
+
   /* Right column tables stacked */
   .right-col {
     display: flex;
@@ -631,9 +642,10 @@
 
   .rolling-summary-foot.over { color: var(--red); }
 
-  .category-row {
+  /* Rolling window — three-level drill-down (category → model → year) */
+  .roll-row {
     display: grid;
-    grid-template-columns: 32px 200px 110px 110px 110px 110px 1fr;
+    grid-template-columns: 32px 1fr 110px 110px 110px 110px 1fr;
     align-items: center;
     padding: 10px 14px 10px 4px;
     border-bottom: 1px solid var(--border);
@@ -643,15 +655,15 @@
     font-size: 12px;
   }
 
-  .category-row:hover {
+  .roll-row:hover {
     background: var(--bg-elev-2);
   }
 
-  .category-row:last-child {
+  .roll-row:last-child {
     border-bottom: none;
   }
 
-  .category-toggle {
+  .roll-toggle {
     font-family: var(--mono);
     font-size: 10px;
     color: var(--text-faint);
@@ -659,24 +671,24 @@
     transition: transform 0.15s;
   }
 
-  .category-row.open .category-toggle {
+  .roll-row.open > .roll-toggle {
     transform: rotate(90deg);
   }
 
-  .category-name {
+  .roll-name {
     font-family: var(--body);
     font-weight: 500;
     font-size: 13px;
     color: var(--text);
   }
 
-  .cat-value {
+  .roll-value {
     text-align: right;
     color: var(--text);
     padding-right: 14px;
   }
 
-  .cat-bar {
+  .roll-bar {
     height: 6px;
     background: var(--bg-elev-2);
     border-radius: 1px;
@@ -684,60 +696,101 @@
     overflow: hidden;
   }
 
-  .cat-bar-fill {
+  .roll-bar-fill {
     height: 100%;
     background: var(--accent);
     opacity: 0.85;
   }
 
-  .cat-bar-fill.over {
+  .roll-bar-fill.over {
     background: var(--red);
   }
 
-  .category-detail {
-    background: var(--bg);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 14px;
+  /* Level 2 (model) — nested inside category */
+  .roll-children {
     display: none;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-dim);
+    background: var(--bg);
   }
 
-  .category-detail.open {
+  .roll-row.open + .roll-children {
     display: block;
   }
 
-  .category-detail-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
+  .roll-children .roll-row {
+    padding-left: 28px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
   }
 
-  .detail-cell {
-    background: var(--bg-elev);
-    padding: 8px 10px;
-    border-radius: 3px;
-    border: 1px solid var(--border);
+  .roll-children .roll-row:hover {
+    background: var(--bg-elev-2);
   }
 
-  .detail-vin {
-    color: var(--blue);
-    font-size: 10px;
+  .roll-children .roll-name {
+    font-size: 12px;
+    color: var(--text-dim);
   }
 
-  .detail-name {
-    color: var(--text);
+  /* Summary row pinned at top of each expansion */
+  .roll-row.summary {
+    background: var(--bg-elev-2);
+    cursor: default;
+    padding-left: 28px;
+    border-bottom: 1px solid var(--border-strong);
+  }
+
+  .roll-row.summary:hover {
+    background: var(--bg-elev-2);
+  }
+
+  .roll-row.summary .roll-name {
+    color: var(--accent);
     font-size: 11px;
-    margin-top: 2px;
-    font-family: var(--body);
-    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
   }
 
-  .detail-meta {
+  .roll-row.summary .roll-toggle {
+    visibility: hidden;
+  }
+
+  /* Level 3 (year) — nested inside model */
+  .roll-children .roll-children .roll-row {
+    padding-left: 56px;
+    background: var(--bg-elev);
+  }
+
+  .roll-children .roll-children .roll-row:hover {
+    background: var(--bg-elev-2);
+  }
+
+  .roll-children .roll-children .roll-name {
+    font-size: 11px;
     color: var(--text-faint);
-    font-size: 9px;
-    margin-top: 2px;
+    font-family: var(--mono);
+  }
+
+  .roll-children .roll-children .roll-row.summary {
+    padding-left: 56px;
+    background: var(--bg-elev-2);
+  }
+
+  /* "View all" link at year level */
+  .roll-viewall {
+    padding: 8px 14px 8px 84px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--blue);
+    cursor: pointer;
+    text-align: right;
+  }
+
+  .roll-viewall:hover {
+    color: var(--text);
+    background: var(--bg-elev-2);
   }
 
   /* ---------- Footer ---------- */
@@ -750,30 +803,6 @@
     color: var(--text-faint);
     display: flex;
     justify-content: space-between;
-  }
-
-  /* ---------- Section header ---------- */
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 8px;
-    margin-top: 4px;
-  }
-
-  .section-header h2 {
-    font-family: var(--body);
-    font-weight: 600;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text-dim);
-  }
-
-  .section-header-meta {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-faint);
   }
 </style>
 </head>
@@ -884,7 +913,66 @@
     <!-- Left column -->
     <div class="left-col">
 
-      <!-- Today's Priorities -->
+      <!-- Merchandise Quality FIRST -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">Merchandise Quality</div>
+          <div class="card-meta">customize</div>
+        </div>
+        <div class="checklist">
+          <div class="check-item">
+            <div class="check-label">
+              <span class="check-icon"></span>
+              No Internet Price
+            </div>
+            <span class="check-count warn">3</span>
+          </div>
+          <div class="check-item">
+            <div class="check-label">
+              <span class="check-icon"></span>
+              Stale Internet Price (7d+)
+            </div>
+            <span class="check-count warn">5</span>
+          </div>
+          <div class="check-item">
+            <div class="check-label">
+              <span class="check-icon"></span>
+              No Wholesale Price
+            </div>
+            <span class="check-count warn">2</span>
+          </div>
+          <div class="check-item">
+            <div class="check-label">
+              <span class="check-icon"></span>
+              Missing Photos
+            </div>
+            <span class="check-count warn">4</span>
+          </div>
+          <div class="check-item">
+            <div class="check-label">
+              <span class="check-icon"></span>
+              No Description
+            </div>
+            <span class="check-count warn">6</span>
+          </div>
+          <div class="check-item">
+            <div class="check-label">
+              <span class="check-icon zero"></span>
+              Front Line Ready
+            </div>
+            <span class="check-count zero">0</span>
+          </div>
+          <div class="check-item">
+            <div class="check-label">
+              <span class="check-icon"></span>
+              Slow Moving
+            </div>
+            <span class="check-count warn">17</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's Priorities BELOW -->
       <div class="card priorities-card">
         <div class="card-head">
           <div class="card-title">Today's Priorities</div>
@@ -984,225 +1072,12 @@
         </div>
       </div>
 
-      <!-- Merchandise Quality -->
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">Merchandise Quality</div>
-          <div class="card-meta">customize</div>
-        </div>
-        <div class="checklist">
-          <div class="check-item">
-            <div class="check-label">
-              <span class="check-icon"></span>
-              No Internet Price
-            </div>
-            <span class="check-count warn">3</span>
-          </div>
-          <div class="check-item">
-            <div class="check-label">
-              <span class="check-icon"></span>
-              Stale Internet Price (7d+)
-            </div>
-            <span class="check-count warn">5</span>
-          </div>
-          <div class="check-item">
-            <div class="check-label">
-              <span class="check-icon"></span>
-              No Wholesale Price
-            </div>
-            <span class="check-count warn">2</span>
-          </div>
-          <div class="check-item">
-            <div class="check-label">
-              <span class="check-icon"></span>
-              Missing Photos
-            </div>
-            <span class="check-count warn">4</span>
-          </div>
-          <div class="check-item">
-            <div class="check-label">
-              <span class="check-icon"></span>
-              No Description
-            </div>
-            <span class="check-count warn">6</span>
-          </div>
-          <div class="check-item">
-            <div class="check-label">
-              <span class="check-icon zero"></span>
-              Front Line Ready
-            </div>
-            <span class="check-count zero">0</span>
-          </div>
-          <div class="check-item">
-            <div class="check-label">
-              <span class="check-icon"></span>
-              Slow Moving
-            </div>
-            <span class="check-count warn">17</span>
-          </div>
-        </div>
-      </div>
-
     </div>
 
     <!-- Right column -->
     <div class="right-col">
 
-      <!-- Stocking Health -->
-      <div class="card table-card">
-        <div class="card-head">
-          <div class="card-title">Stocking Health</div>
-          <div class="card-meta">by age bucket · stocking score</div>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Age</th>
-              <th>Count</th>
-              <th>Green</th>
-              <th>Yellow</th>
-              <th>Red</th>
-              <th>Below ICO</th>
-              <th>Zero Leads 14d</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>0–21 days</td>
-              <td>187</td>
-              <td><span class="pill pill-green">162</span></td>
-              <td><span class="pill pill-yellow">19</span></td>
-              <td><span class="pill pill-zero">0</span></td>
-              <td class="zero">0</td>
-              <td class="link">6</td>
-            </tr>
-            <tr>
-              <td>22–25 days</td>
-              <td>16</td>
-              <td><span class="pill pill-green">11</span></td>
-              <td><span class="pill pill-yellow">4</span></td>
-              <td><span class="pill pill-red">1</span></td>
-              <td class="zero">0</td>
-              <td class="link">2</td>
-            </tr>
-            <tr>
-              <td>26–45 days</td>
-              <td>101</td>
-              <td><span class="pill pill-green">38</span></td>
-              <td><span class="pill pill-yellow">52</span></td>
-              <td><span class="pill pill-red">11</span></td>
-              <td class="link">1</td>
-              <td class="link">14</td>
-            </tr>
-            <tr>
-              <td>46–70 days</td>
-              <td>49</td>
-              <td><span class="pill pill-green">9</span></td>
-              <td><span class="pill pill-yellow">22</span></td>
-              <td><span class="pill pill-red">18</span></td>
-              <td class="link">1</td>
-              <td class="link">9</td>
-            </tr>
-            <tr>
-              <td>71+ days</td>
-              <td>56</td>
-              <td><span class="pill pill-green">2</span></td>
-              <td><span class="pill pill-yellow">14</span></td>
-              <td><span class="pill pill-red">40</span></td>
-              <td class="link">1</td>
-              <td class="link">12</td>
-            </tr>
-            <tr class="total">
-              <td>Total</td>
-              <td>409</td>
-              <td><span class="pill pill-green">222</span></td>
-              <td><span class="pill pill-yellow">111</span></td>
-              <td><span class="pill pill-red">70</span></td>
-              <td class="link">3</td>
-              <td class="link">43</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Tippability -->
-      <div class="card table-card">
-        <div class="card-head">
-          <div class="card-title">Front Line Ready & Tippability</div>
-          <div class="card-meta">tip threshold $500 · per platform</div>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Age</th>
-              <th>FLR / In Stock</th>
-              <th>CarGurus</th>
-              <th>AutoTrader</th>
-              <th>Carfax</th>
-              <th>Cars.com</th>
-              <th>Zero Leads</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>0–21 days</td>
-              <td>72 / 187</td>
-              <td class="link">38</td>
-              <td class="link">14</td>
-              <td class="link">22</td>
-              <td class="link">31</td>
-              <td class="link">52</td>
-            </tr>
-            <tr>
-              <td>22–25 days</td>
-              <td>14 / 16</td>
-              <td class="link">5</td>
-              <td class="link">2</td>
-              <td class="link">3</td>
-              <td class="link">4</td>
-              <td class="link">3</td>
-            </tr>
-            <tr>
-              <td>26–45 days</td>
-              <td>96 / 101</td>
-              <td class="link">28</td>
-              <td class="link">11</td>
-              <td class="link">18</td>
-              <td class="link">22</td>
-              <td class="link">19</td>
-            </tr>
-            <tr>
-              <td>46–70 days</td>
-              <td>48 / 49</td>
-              <td class="link">17</td>
-              <td class="link">7</td>
-              <td class="link">11</td>
-              <td class="link">14</td>
-              <td class="link">8</td>
-            </tr>
-            <tr>
-              <td>71+ days</td>
-              <td>56 / 56</td>
-              <td class="link">9</td>
-              <td class="link">4</td>
-              <td class="link">6</td>
-              <td class="link">8</td>
-              <td class="link">5</td>
-            </tr>
-            <tr class="total">
-              <td>Total</td>
-              <td>286 / 409</td>
-              <td class="link">97</td>
-              <td class="link">38</td>
-              <td class="link">60</td>
-              <td class="link">79</td>
-              <td class="link">87</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Investment & Markup -->
+      <!-- Investment & Markup FIRST -->
       <div class="card table-card">
         <div class="card-head">
           <div class="card-title">Investment & Markup</div>
@@ -1304,6 +1179,178 @@
         </table>
       </div>
 
+      <!-- Stocking Health SECOND with new lead columns -->
+      <div class="card table-card">
+        <div class="card-head">
+          <div class="card-title">Stocking Health</div>
+          <div class="card-meta">by age bucket · stocking score & lead distribution</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2">Age</th>
+              <th rowspan="2">Count</th>
+              <th colspan="3" class="group">Stocking Score</th>
+              <th rowspan="2">Below ICO</th>
+              <th colspan="4" class="group">Leads</th>
+            </tr>
+            <tr>
+              <th>Green</th>
+              <th>Yellow</th>
+              <th>Red</th>
+              <th>0</th>
+              <th>1</th>
+              <th>2</th>
+              <th>3+</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>0–21 days</td>
+              <td>187</td>
+              <td><span class="pill pill-green">162</span></td>
+              <td><span class="pill pill-yellow">19</span></td>
+              <td><span class="pill pill-zero">0</span></td>
+              <td class="zero">0</td>
+              <td class="lead-zero">52</td>
+              <td class="link">38</td>
+              <td class="link">29</td>
+              <td class="link">68</td>
+            </tr>
+            <tr>
+              <td>22–25 days</td>
+              <td>16</td>
+              <td><span class="pill pill-green">11</span></td>
+              <td><span class="pill pill-yellow">4</span></td>
+              <td><span class="pill pill-red">1</span></td>
+              <td class="zero">0</td>
+              <td class="lead-zero">3</td>
+              <td class="link">4</td>
+              <td class="link">3</td>
+              <td class="link">6</td>
+            </tr>
+            <tr>
+              <td>26–45 days</td>
+              <td>101</td>
+              <td><span class="pill pill-green">38</span></td>
+              <td><span class="pill pill-yellow">52</span></td>
+              <td><span class="pill pill-red">11</span></td>
+              <td class="link">1</td>
+              <td class="lead-zero">19</td>
+              <td class="link">21</td>
+              <td class="link">17</td>
+              <td class="link">44</td>
+            </tr>
+            <tr>
+              <td>46–70 days</td>
+              <td>49</td>
+              <td><span class="pill pill-green">9</span></td>
+              <td><span class="pill pill-yellow">22</span></td>
+              <td><span class="pill pill-red">18</span></td>
+              <td class="link">1</td>
+              <td class="lead-zero">8</td>
+              <td class="link">10</td>
+              <td class="link">9</td>
+              <td class="link">22</td>
+            </tr>
+            <tr>
+              <td>71+ days</td>
+              <td>56</td>
+              <td><span class="pill pill-green">2</span></td>
+              <td><span class="pill pill-yellow">14</span></td>
+              <td><span class="pill pill-red">40</span></td>
+              <td class="link">1</td>
+              <td class="lead-zero">12</td>
+              <td class="link">8</td>
+              <td class="link">6</td>
+              <td class="link">30</td>
+            </tr>
+            <tr class="total">
+              <td>Total</td>
+              <td>409</td>
+              <td><span class="pill pill-green">222</span></td>
+              <td><span class="pill pill-yellow">111</span></td>
+              <td><span class="pill pill-red">70</span></td>
+              <td class="link">3</td>
+              <td class="lead-zero">94</td>
+              <td class="link">81</td>
+              <td class="link">64</td>
+              <td class="link">170</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Front Line Ready & Tippability THIRD - leads column removed -->
+      <div class="card table-card">
+        <div class="card-head">
+          <div class="card-title">Front Line Ready & Tippability</div>
+          <div class="card-meta">tip threshold $500 · per platform</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Age</th>
+              <th>FLR / In Stock</th>
+              <th>CarGurus</th>
+              <th>AutoTrader</th>
+              <th>Carfax</th>
+              <th>Cars.com</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>0–21 days</td>
+              <td>72 / 187</td>
+              <td class="link">38</td>
+              <td class="link">14</td>
+              <td class="link">22</td>
+              <td class="link">31</td>
+            </tr>
+            <tr>
+              <td>22–25 days</td>
+              <td>14 / 16</td>
+              <td class="link">5</td>
+              <td class="link">2</td>
+              <td class="link">3</td>
+              <td class="link">4</td>
+            </tr>
+            <tr>
+              <td>26–45 days</td>
+              <td>96 / 101</td>
+              <td class="link">28</td>
+              <td class="link">11</td>
+              <td class="link">18</td>
+              <td class="link">22</td>
+            </tr>
+            <tr>
+              <td>46–70 days</td>
+              <td>48 / 49</td>
+              <td class="link">17</td>
+              <td class="link">7</td>
+              <td class="link">11</td>
+              <td class="link">14</td>
+            </tr>
+            <tr>
+              <td>71+ days</td>
+              <td>56 / 56</td>
+              <td class="link">9</td>
+              <td class="link">4</td>
+              <td class="link">6</td>
+              <td class="link">8</td>
+            </tr>
+            <tr class="total">
+              <td>Total</td>
+              <td>286 / 409</td>
+              <td class="link">97</td>
+              <td class="link">38</td>
+              <td class="link">60</td>
+              <td class="link">79</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
     </div>
 
   </div>
@@ -1341,133 +1388,294 @@
       </div>
     </div>
 
-    <!-- Category rows -->
+    <!-- Category rows with model and year drill-down -->
     <div class="categories">
 
-      <div class="category-row" onclick="toggleCategory(this)">
-        <div class="category-toggle">▶</div>
-        <div class="category-name">Midsize SUV</div>
-        <div class="cat-value">98 in stock</div>
-        <div class="cat-value">76 sold</div>
-        <div class="cat-value">+22 over</div>
-        <div class="cat-value">29% of sales</div>
-        <div class="cat-bar"><div class="cat-bar-fill" style="width: 90%;"></div></div>
+      <!-- MIDSIZE SUV (expanded by default to show structure) -->
+      <div class="roll-row open" onclick="toggleRow(this)">
+        <div class="roll-toggle">▶</div>
+        <div class="roll-name">Midsize SUV</div>
+        <div class="roll-value">98 in stock</div>
+        <div class="roll-value">76 sold</div>
+        <div class="roll-value">+22 over</div>
+        <div class="roll-value">29% of sales</div>
+        <div class="roll-bar"><div class="roll-bar-fill" style="width: 90%;"></div></div>
       </div>
-      <div class="category-detail">
-        <div class="category-detail-grid">
-          <div class="detail-cell">
-            <div class="detail-vin">VIN ...4C7821</div>
-            <div class="detail-name">2022 Toyota RAV4 XLE</div>
-            <div class="detail-meta">$28,995 · 31 days · 14 leads</div>
-          </div>
-          <div class="detail-cell">
-            <div class="detail-vin">VIN ...9X4112</div>
-            <div class="detail-name">2021 Honda CR-V EX-L</div>
-            <div class="detail-meta">$26,500 · 47 days · 8 leads</div>
-          </div>
-          <div class="detail-cell">
-            <div class="detail-vin">VIN ...3B8847</div>
-            <div class="detail-name">2023 Mazda CX-5 Touring</div>
-            <div class="detail-meta">$29,800 · 12 days · 22 leads</div>
-          </div>
-          <div class="detail-cell">
-            <div class="detail-vin">VIN ...5T2204</div>
-            <div class="detail-name">2020 Ford Escape Titanium</div>
-            <div class="detail-meta">$22,400 · 71 days · 3 leads</div>
-          </div>
+      <div class="roll-children">
+
+        <div class="roll-row summary">
+          <div class="roll-toggle">▶</div>
+          <div class="roll-name">Midsize SUV total</div>
+          <div class="roll-value">98 in stock</div>
+          <div class="roll-value">76 sold</div>
+          <div class="roll-value">+22 over</div>
+          <div class="roll-value">29% of sales</div>
+          <div class="roll-bar"><div class="roll-bar-fill" style="width: 90%;"></div></div>
         </div>
-        <div style="margin-top: 10px; text-align: right;">
-          <a style="color: var(--blue); cursor: pointer; font-size: 11px;">View all 98 vehicles in this category →</a>
+
+        <!-- RAV4 (expanded to show year level) -->
+        <div class="roll-row open" onclick="toggleRow(this)">
+          <div class="roll-toggle">▶</div>
+          <div class="roll-name">Toyota RAV4</div>
+          <div class="roll-value">24 in stock</div>
+          <div class="roll-value">22 sold</div>
+          <div class="roll-value">+2 over</div>
+          <div class="roll-value">8% of sales</div>
+          <div class="roll-bar"><div class="roll-bar-fill" style="width: 92%;"></div></div>
         </div>
+        <div class="roll-children">
+          <div class="roll-row summary">
+            <div class="roll-toggle">▶</div>
+            <div class="roll-name">RAV4 total</div>
+            <div class="roll-value">24 in stock</div>
+            <div class="roll-value">22 sold</div>
+            <div class="roll-value">+2 over</div>
+            <div class="roll-value">8% of sales</div>
+            <div class="roll-bar"><div class="roll-bar-fill" style="width: 92%;"></div></div>
+          </div>
+          <div class="roll-row" onclick="event.stopPropagation();">
+            <div class="roll-toggle"></div>
+            <div class="roll-name">2023</div>
+            <div class="roll-value">8 in stock</div>
+            <div class="roll-value">9 sold</div>
+            <div class="roll-value">−1 under</div>
+            <div class="roll-value">3% of sales</div>
+            <div class="roll-bar"><div class="roll-bar-fill" style="width: 100%;"></div></div>
+          </div>
+          <div class="roll-row" onclick="event.stopPropagation();">
+            <div class="roll-toggle"></div>
+            <div class="roll-name">2022</div>
+            <div class="roll-value">9 in stock</div>
+            <div class="roll-value">8 sold</div>
+            <div class="roll-value">+1 over</div>
+            <div class="roll-value">3% of sales</div>
+            <div class="roll-bar"><div class="roll-bar-fill" style="width: 88%;"></div></div>
+          </div>
+          <div class="roll-row" onclick="event.stopPropagation();">
+            <div class="roll-toggle"></div>
+            <div class="roll-name">2021</div>
+            <div class="roll-value">5 in stock</div>
+            <div class="roll-value">4 sold</div>
+            <div class="roll-value">+1 over</div>
+            <div class="roll-value">1% of sales</div>
+            <div class="roll-bar"><div class="roll-bar-fill" style="width: 75%;"></div></div>
+          </div>
+          <div class="roll-row" onclick="event.stopPropagation();">
+            <div class="roll-toggle"></div>
+            <div class="roll-name">2020</div>
+            <div class="roll-value">2 in stock</div>
+            <div class="roll-value">1 sold</div>
+            <div class="roll-value">+1 over</div>
+            <div class="roll-value">0.4% of sales</div>
+            <div class="roll-bar"><div class="roll-bar-fill over" style="width: 50%;"></div></div>
+          </div>
+          <div class="roll-viewall" onclick="event.stopPropagation();">View all 24 RAV4s in inventory →</div>
+        </div>
+
+        <div class="roll-row" onclick="toggleRow(this)">
+          <div class="roll-toggle">▶</div>
+          <div class="roll-name">Honda CR-V</div>
+          <div class="roll-value">18 in stock</div>
+          <div class="roll-value">15 sold</div>
+          <div class="roll-value">+3 over</div>
+          <div class="roll-value">6% of sales</div>
+          <div class="roll-bar"><div class="roll-bar-fill" style="width: 83%;"></div></div>
+        </div>
+        <div class="roll-children">
+          <div class="roll-row summary">
+            <div class="roll-toggle">▶</div>
+            <div class="roll-name">CR-V total</div>
+            <div class="roll-value">18 in stock</div>
+            <div class="roll-value">15 sold</div>
+            <div class="roll-value">+3 over</div>
+            <div class="roll-value">6% of sales</div>
+            <div class="roll-bar"><div class="roll-bar-fill" style="width: 83%;"></div></div>
+          </div>
+          <div class="roll-row" onclick="event.stopPropagation();">
+            <div class="roll-toggle"></div>
+            <div class="roll-name">2023</div>
+            <div class="roll-value">6 in stock</div>
+            <div class="roll-value">7 sold</div>
+            <div class="roll-value">−1 under</div>
+            <div class="roll-value">2% of sales</div>
+            <div class="roll-bar"><div class="roll-bar-fill" style="width: 100%;"></div></div>
+          </div>
+          <div class="roll-row" onclick="event.stopPropagation();">
+            <div class="roll-toggle"></div>
+            <div class="roll-name">2022</div>
+            <div class="roll-value">7 in stock</div>
+            <div class="roll-value">5 sold</div>
+            <div class="roll-value">+2 over</div>
+            <div class="roll-value">2% of sales</div>
+            <div class="roll-bar"><div class="roll-bar-fill" style="width: 71%;"></div></div>
+          </div>
+          <div class="roll-row" onclick="event.stopPropagation();">
+            <div class="roll-toggle"></div>
+            <div class="roll-name">2021</div>
+            <div class="roll-value">5 in stock</div>
+            <div class="roll-value">3 sold</div>
+            <div class="roll-value">+2 over</div>
+            <div class="roll-value">1% of sales</div>
+            <div class="roll-bar"><div class="roll-bar-fill over" style="width: 60%;"></div></div>
+          </div>
+          <div class="roll-viewall" onclick="event.stopPropagation();">View all 18 CR-Vs in inventory →</div>
+        </div>
+
+        <div class="roll-row" onclick="toggleRow(this)">
+          <div class="roll-toggle">▶</div>
+          <div class="roll-name">Mazda CX-5</div>
+          <div class="roll-value">14 in stock</div>
+          <div class="roll-value">11 sold</div>
+          <div class="roll-value">+3 over</div>
+          <div class="roll-value">4% of sales</div>
+          <div class="roll-bar"><div class="roll-bar-fill" style="width: 79%;"></div></div>
+        </div>
+        <div class="roll-children"></div>
+
+        <div class="roll-row" onclick="toggleRow(this)">
+          <div class="roll-toggle">▶</div>
+          <div class="roll-name">Ford Escape</div>
+          <div class="roll-value">12 in stock</div>
+          <div class="roll-value">8 sold</div>
+          <div class="roll-value">+4 over</div>
+          <div class="roll-value">3% of sales</div>
+          <div class="roll-bar"><div class="roll-bar-fill over" style="width: 67%;"></div></div>
+        </div>
+        <div class="roll-children"></div>
+
+        <div class="roll-row" onclick="toggleRow(this)">
+          <div class="roll-toggle">▶</div>
+          <div class="roll-name">Hyundai Tucson</div>
+          <div class="roll-value">11 in stock</div>
+          <div class="roll-value">8 sold</div>
+          <div class="roll-value">+3 over</div>
+          <div class="roll-value">3% of sales</div>
+          <div class="roll-bar"><div class="roll-bar-fill" style="width: 73%;"></div></div>
+        </div>
+        <div class="roll-children"></div>
+
+        <div class="roll-row" onclick="toggleRow(this)">
+          <div class="roll-toggle">▶</div>
+          <div class="roll-name">Nissan Rogue</div>
+          <div class="roll-value">10 in stock</div>
+          <div class="roll-value">7 sold</div>
+          <div class="roll-value">+3 over</div>
+          <div class="roll-value">3% of sales</div>
+          <div class="roll-bar"><div class="roll-bar-fill" style="width: 70%;"></div></div>
+        </div>
+        <div class="roll-children"></div>
+
+        <div class="roll-row" onclick="toggleRow(this)">
+          <div class="roll-toggle">▶</div>
+          <div class="roll-name">Other Midsize SUVs</div>
+          <div class="roll-value">9 in stock</div>
+          <div class="roll-value">5 sold</div>
+          <div class="roll-value">+4 over</div>
+          <div class="roll-value">2% of sales</div>
+          <div class="roll-bar"><div class="roll-bar-fill over" style="width: 56%;"></div></div>
+        </div>
+        <div class="roll-children"></div>
+
       </div>
 
-      <div class="category-row" onclick="toggleCategory(this)">
-        <div class="category-toggle">▶</div>
-        <div class="category-name">Sedan</div>
-        <div class="cat-value">87 in stock</div>
-        <div class="cat-value">64 sold</div>
-        <div class="cat-value">+23 over</div>
-        <div class="cat-value">21% of sales</div>
-        <div class="cat-bar"><div class="cat-bar-fill" style="width: 80%;"></div></div>
+      <!-- SEDAN -->
+      <div class="roll-row" onclick="toggleRow(this)">
+        <div class="roll-toggle">▶</div>
+        <div class="roll-name">Sedan</div>
+        <div class="roll-value">87 in stock</div>
+        <div class="roll-value">64 sold</div>
+        <div class="roll-value">+23 over</div>
+        <div class="roll-value">21% of sales</div>
+        <div class="roll-bar"><div class="roll-bar-fill" style="width: 80%;"></div></div>
       </div>
+      <div class="roll-children"></div>
 
-      <div class="category-row" onclick="toggleCategory(this)">
-        <div class="category-toggle">▶</div>
-        <div class="category-name">Truck</div>
-        <div class="cat-value">71 in stock</div>
-        <div class="cat-value">68 sold</div>
-        <div class="cat-value">+3 over</div>
-        <div class="cat-value">23% of sales</div>
-        <div class="cat-bar"><div class="cat-bar-fill" style="width: 88%;"></div></div>
+      <!-- TRUCK -->
+      <div class="roll-row" onclick="toggleRow(this)">
+        <div class="roll-toggle">▶</div>
+        <div class="roll-name">Truck</div>
+        <div class="roll-value">71 in stock</div>
+        <div class="roll-value">68 sold</div>
+        <div class="roll-value">+3 over</div>
+        <div class="roll-value">23% of sales</div>
+        <div class="roll-bar"><div class="roll-bar-fill" style="width: 88%;"></div></div>
       </div>
+      <div class="roll-children"></div>
 
-      <div class="category-row" onclick="toggleCategory(this)">
-        <div class="category-toggle">▶</div>
-        <div class="category-name">Large SUV</div>
-        <div class="cat-value">62 in stock</div>
-        <div class="cat-value">42 sold</div>
-        <div class="cat-value">+20 over</div>
-        <div class="cat-value">14% of sales</div>
-        <div class="cat-bar"><div class="cat-bar-fill over" style="width: 65%;"></div></div>
+      <!-- LARGE SUV -->
+      <div class="roll-row" onclick="toggleRow(this)">
+        <div class="roll-toggle">▶</div>
+        <div class="roll-name">Large SUV</div>
+        <div class="roll-value">62 in stock</div>
+        <div class="roll-value">42 sold</div>
+        <div class="roll-value">+20 over</div>
+        <div class="roll-value">14% of sales</div>
+        <div class="roll-bar"><div class="roll-bar-fill over" style="width: 65%;"></div></div>
       </div>
+      <div class="roll-children"></div>
 
-      <div class="category-row" onclick="toggleCategory(this)">
-        <div class="category-toggle">▶</div>
-        <div class="category-name">Coupe</div>
-        <div class="cat-value">38 in stock</div>
-        <div class="cat-value">26 sold</div>
-        <div class="cat-value">+12 over</div>
-        <div class="cat-value">9% of sales</div>
-        <div class="cat-bar"><div class="cat-bar-fill" style="width: 50%;"></div></div>
+      <!-- COUPE -->
+      <div class="roll-row" onclick="toggleRow(this)">
+        <div class="roll-toggle">▶</div>
+        <div class="roll-name">Coupe</div>
+        <div class="roll-value">38 in stock</div>
+        <div class="roll-value">26 sold</div>
+        <div class="roll-value">+12 over</div>
+        <div class="roll-value">9% of sales</div>
+        <div class="roll-bar"><div class="roll-bar-fill" style="width: 50%;"></div></div>
       </div>
+      <div class="roll-children"></div>
 
-      <div class="category-row" onclick="toggleCategory(this)">
-        <div class="category-toggle">▶</div>
-        <div class="category-name">Hatchback</div>
-        <div class="cat-value">29 in stock</div>
-        <div class="cat-value">14 sold</div>
-        <div class="cat-value">+15 over</div>
-        <div class="cat-value">5% of sales</div>
-        <div class="cat-bar"><div class="cat-bar-fill over" style="width: 35%;"></div></div>
+      <!-- HATCHBACK -->
+      <div class="roll-row" onclick="toggleRow(this)">
+        <div class="roll-toggle">▶</div>
+        <div class="roll-name">Hatchback</div>
+        <div class="roll-value">29 in stock</div>
+        <div class="roll-value">14 sold</div>
+        <div class="roll-value">+15 over</div>
+        <div class="roll-value">5% of sales</div>
+        <div class="roll-bar"><div class="roll-bar-fill over" style="width: 35%;"></div></div>
       </div>
+      <div class="roll-children"></div>
 
-      <div class="category-row" onclick="toggleCategory(this)">
-        <div class="category-toggle">▶</div>
-        <div class="category-name">Van</div>
-        <div class="cat-value">17 in stock</div>
-        <div class="cat-value">9 sold</div>
-        <div class="cat-value">+8 over</div>
-        <div class="cat-value">3% of sales</div>
-        <div class="cat-bar"><div class="cat-bar-fill over" style="width: 22%;"></div></div>
+      <!-- VAN -->
+      <div class="roll-row" onclick="toggleRow(this)">
+        <div class="roll-toggle">▶</div>
+        <div class="roll-name">Van</div>
+        <div class="roll-value">17 in stock</div>
+        <div class="roll-value">9 sold</div>
+        <div class="roll-value">+8 over</div>
+        <div class="roll-value">3% of sales</div>
+        <div class="roll-bar"><div class="roll-bar-fill over" style="width: 22%;"></div></div>
       </div>
+      <div class="roll-children"></div>
 
-      <div class="category-row" onclick="toggleCategory(this)">
-        <div class="category-toggle">▶</div>
-        <div class="category-name">Convertible</div>
-        <div class="cat-value">7 in stock</div>
-        <div class="cat-value">3 sold</div>
-        <div class="cat-value">+4 over</div>
-        <div class="cat-value">1% of sales</div>
-        <div class="cat-bar"><div class="cat-bar-fill over" style="width: 8%;"></div></div>
+      <!-- CONVERTIBLE -->
+      <div class="roll-row" onclick="toggleRow(this)">
+        <div class="roll-toggle">▶</div>
+        <div class="roll-name">Convertible</div>
+        <div class="roll-value">7 in stock</div>
+        <div class="roll-value">3 sold</div>
+        <div class="roll-value">+4 over</div>
+        <div class="roll-value">1% of sales</div>
+        <div class="roll-bar"><div class="roll-bar-fill over" style="width: 8%;"></div></div>
       </div>
+      <div class="roll-children"></div>
 
     </div>
   </div>
 
   <div class="footnote">
-    <span>VINTRYX · INVENTORY OVERVIEW · v0.1 PROTOTYPE</span>
+    <span>VINTRYX · INVENTORY OVERVIEW · v0.3 PROTOTYPE</span>
     <span>HAMPSTEAD PRE-OWNED · CONFIDENTIAL</span>
   </div>
 
 </div>
 
 <script>
-  function toggleCategory(row) {
+  function toggleRow(row) {
     row.classList.toggle('open');
-    const detail = row.nextElementSibling;
-    if (detail && detail.classList.contains('category-detail')) {
-      detail.classList.toggle('open');
-    }
+    event.stopPropagation();
   }
 </script>
 
