@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vintryx — IMS Inventory Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Söhne:wght@400;500;600&family=Inter+Tight:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0E0F12;
+    --bg-elev: #15171C;
+    --bg-elev-2: #1B1E25;
+    --border: #262932;
+    --border-strong: #353947;
+    --text: #E8EAF0;
+    --text-dim: #9CA3B0;
+    --text-faint: #6B7280;
+    --green: #4ADE80;
+    --green-bg: rgba(74, 222, 128, 0.12);
+    --yellow: #FBBF24;
+    --yellow-bg: rgba(251, 191, 36, 0.12);
+    --red: #F87171;
+    --red-bg: rgba(248, 113, 113, 0.12);
+    --blue: #60A5FA;
+    --blue-bg: rgba(96, 165, 250, 0.12);
+    --accent: #E8B931;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --display: 'Fraunces', 'Söhne', Georgia, serif;
+    --body: 'Inter Tight', -apple-system, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--body);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+    padding: 0;
+  }
+
+  .app {
+    max-width: 1640px;
+    margin: 0 auto;
+    padding: 20px 24px 60px;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 18px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .brand-mark {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .brand-divider {
+    color: var(--border-strong);
+    font-size: 14px;
+  }
+
+  .brand-page {
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .session {
+    display: flex;
+    gap: 18px;
+    align-items: baseline;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-faint);
+  }
+
+  .session-item {
+    display: flex;
+    gap: 6px;
+  }
+
+  .session-label {
+    color: var(--text-faint);
+  }
+
+  .session-value {
+    color: var(--text-dim);
+  }
+
+  /* ---------- Greeting ---------- */
+  .greeting {
+    margin-bottom: 22px;
+  }
+
+  .greeting-line {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 22px;
+    letter-spacing: -0.015em;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .greeting-line .em {
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  .greeting-sub {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-family: var(--mono);
+  }
+
+  /* ---------- Stat strip ---------- */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+
+  .stat-strip-secondary {
+    grid-template-columns: repeat(4, 1fr);
+    margin-bottom: 22px;
+  }
+
+  .stat {
+    background: var(--bg-elev);
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    cursor: pointer;
+    transition: background 0.12s;
+    position: relative;
+  }
+
+  .stat:hover {
+    background: var(--bg-elev-2);
+  }
+
+  .stat-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    line-height: 1.2;
+  }
+
+  .stat-period {
+    font-size: 9px;
+    color: var(--text-faint);
+    font-family: var(--mono);
+    margin-top: -1px;
+  }
+
+  .stat-value {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    line-height: 1.1;
+    margin-top: 3px;
+  }
+
+  .stat-foot {
+    font-size: 10px;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    margin-top: 1px;
+  }
+
+  .stat-foot.up { color: var(--green); }
+  .stat-foot.down { color: var(--red); }
+  .stat-foot.neutral { color: var(--text-faint); }
+
+  .stat.priority {
+    background: var(--bg-elev);
+  }
+
+  .stat.priority .stat-value {
+    color: var(--red);
+  }
+
+  /* ---------- Main grid ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  /* ---------- Card base ---------- */
+  .card {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 12px 14px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .card-title {
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text);
+  }
+
+  .card-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-faint);
+  }
+
+  /* ---------- Today's Priorities ---------- */
+  .priorities-card {
+    margin-bottom: 16px;
+  }
+
+  .priorities-list {
+    padding: 4px 0;
+  }
+
+  .priority-item {
+    display: grid;
+    grid-template-columns: 22px 1fr auto;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.12s;
+    align-items: start;
+  }
+
+  .priority-item:last-child {
+    border-bottom: none;
+  }
+
+  .priority-item:hover {
+    background: var(--bg-elev-2);
+  }
+
+  .priority-num {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 11px;
+    color: var(--accent);
+    margin-top: 1px;
+  }
+
+  .priority-body {
+    min-width: 0;
+  }
+
+  .priority-title {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 3px;
+    letter-spacing: -0.005em;
+  }
+
+  .priority-title .units {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-left: 6px;
+  }
+
+  .priority-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.45;
+    margin-bottom: 6px;
+  }
+
+  .priority-tags {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .tag-data { background: rgba(96, 165, 250, 0.14); color: var(--blue); }
+  .tag-strategy { background: rgba(251, 191, 36, 0.14); color: var(--yellow); }
+  .tag-human { background: rgba(74, 222, 128, 0.14); color: var(--green); }
+  .tag-high { background: rgba(248, 113, 113, 0.14); color: var(--red); }
+  .tag-med { background: rgba(251, 191, 36, 0.14); color: var(--yellow); }
+
+  .priority-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-end;
+  }
+
+  .btn-review {
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 10px;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    transition: opacity 0.12s;
+  }
+
+  .btn-review:hover { opacity: 0.85; }
+
+  .btn-disagree {
+    background: transparent;
+    color: var(--text-faint);
+    border: none;
+    font-family: var(--mono);
+    font-size: 9px;
+    cursor: pointer;
+    padding: 2px 4px;
+    transition: color 0.12s;
+  }
+
+  .btn-disagree:hover { color: var(--text-dim); }
+
+  .priorities-foot {
+    padding: 9px 14px;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-faint);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .priorities-foot a {
+    color: var(--text-dim);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .priorities-foot a:hover {
+    color: var(--text);
+  }
+
+  /* ---------- Merchandise Quality ---------- */
+  .checklist {
+    padding: 4px 0;
+  }
+
+  .check-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+
+  .check-item:last-child { border-bottom: none; }
+
+  .check-item:hover { background: var(--bg-elev-2); }
+
+  .check-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--text);
+  }
+
+  .check-icon {
+    width: 6px;
+    height: 6px;
+    border-radius: 1px;
+    background: var(--yellow);
+    flex-shrink: 0;
+  }
+
+  .check-icon.zero {
+    background: var(--text-faint);
+    opacity: 0.4;
+  }
+
+  .check-count {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 11px;
+    color: var(--text);
+    background: var(--bg-elev-2);
+    padding: 2px 8px;
+    border-radius: 3px;
+    min-width: 28px;
+    text-align: center;
+  }
+
+  .check-count.warn {
+    background: rgba(251, 191, 36, 0.14);
+    color: var(--yellow);
+  }
+
+  .check-count.zero {
+    background: transparent;
+    color: var(--text-faint);
+  }
+
+  /* ---------- Tables ---------- */
+  .table-card {
+    margin-bottom: 16px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  thead th {
+    text-align: right;
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 10px;
+    color: var(--text-faint);
+    padding: 8px 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-elev);
+    white-space: nowrap;
+  }
+
+  thead th:first-child {
+    text-align: left;
+  }
+
+  thead th.group {
+    text-align: center;
+    background: var(--bg-elev-2);
+    color: var(--text-dim);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-strong);
+  }
+
+  tbody td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+  }
+
+  tbody td:first-child {
+    text-align: left;
+    color: var(--text);
+    font-family: var(--body);
+    font-weight: 500;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  tbody tr.total td {
+    background: var(--bg-elev-2);
+    font-weight: 600;
+    color: var(--text);
+    border-top: 1px solid var(--border-strong);
+    border-bottom: none;
+  }
+
+  tbody tr.total td:first-child {
+    color: var(--accent);
+  }
+
+  tbody tr:hover {
+    background: var(--bg-elev-2);
+    cursor: pointer;
+  }
+
+  td.link {
+    color: var(--blue);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  td.link:hover {
+    text-decoration: underline;
+  }
+
+  td.zero {
+    color: var(--text-faint);
+  }
+
+  td.neg {
+    color: var(--red);
+  }
+
+  /* Stocking Health pill chips */
+  .pill {
+    display: inline-block;
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 3px;
+    min-width: 32px;
+    text-align: center;
+  }
+
+  .pill-green { background: var(--green-bg); color: var(--green); }
+  .pill-yellow { background: var(--yellow-bg); color: var(--yellow); }
+  .pill-red { background: var(--red-bg); color: var(--red); }
+  .pill-zero { background: transparent; color: var(--text-faint); }
+
+  /* Right column tables stacked */
+  .right-col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---------- Rolling Window ---------- */
+  .rolling {
+    margin-top: 0;
+  }
+
+  .rolling-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .pill-select {
+    background: var(--bg-elev-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  .rolling-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: var(--bg-elev-2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rolling-summary-cell {
+    padding: 12px 16px;
+    border-right: 1px solid var(--border);
+  }
+
+  .rolling-summary-cell:last-child { border-right: none; }
+
+  .rolling-summary-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-faint);
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+
+  .rolling-summary-value {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 22px;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .rolling-summary-foot {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  .rolling-summary-foot.over { color: var(--red); }
+
+  .category-row {
+    display: grid;
+    grid-template-columns: 32px 200px 110px 110px 110px 110px 1fr;
+    align-items: center;
+    padding: 10px 14px 10px 4px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.12s;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  .category-row:hover {
+    background: var(--bg-elev-2);
+  }
+
+  .category-row:last-child {
+    border-bottom: none;
+  }
+
+  .category-toggle {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-faint);
+    text-align: center;
+    transition: transform 0.15s;
+  }
+
+  .category-row.open .category-toggle {
+    transform: rotate(90deg);
+  }
+
+  .category-name {
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .cat-value {
+    text-align: right;
+    color: var(--text);
+    padding-right: 14px;
+  }
+
+  .cat-bar {
+    height: 6px;
+    background: var(--bg-elev-2);
+    border-radius: 1px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cat-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    opacity: 0.85;
+  }
+
+  .cat-bar-fill.over {
+    background: var(--red);
+  }
+
+  .category-detail {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 14px;
+    display: none;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .category-detail.open {
+    display: block;
+  }
+
+  .category-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .detail-cell {
+    background: var(--bg-elev);
+    padding: 8px 10px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  .detail-vin {
+    color: var(--blue);
+    font-size: 10px;
+  }
+
+  .detail-name {
+    color: var(--text);
+    font-size: 11px;
+    margin-top: 2px;
+    font-family: var(--body);
+    font-weight: 500;
+  }
+
+  .detail-meta {
+    color: var(--text-faint);
+    font-size: 9px;
+    margin-top: 2px;
+  }
+
+  /* ---------- Footer ---------- */
+  .footnote {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-faint);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ---------- Section header ---------- */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+    margin-top: 4px;
+  }
+
+  .section-header h2 {
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+  }
+
+  .section-header-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-faint);
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="brand">
+      <span class="brand-mark">VINTRYX</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-page">Inventory Overview</span>
+    </div>
+    <div class="session">
+      <div class="session-item">
+        <span class="session-label">STORE</span>
+        <span class="session-value">Hampstead Pre-Owned</span>
+      </div>
+      <div class="session-item">
+        <span class="session-label">USER</span>
+        <span class="session-value">A. Birdsong</span>
+      </div>
+      <div class="session-item">
+        <span class="session-label">UPDATED</span>
+        <span class="session-value">8:42 AM EST</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Greeting -->
+  <div class="greeting">
+    <div class="greeting-line">Good morning, Anthony. <span class="em">Three things need your attention before noon.</span></div>
+    <div class="greeting-sub">409 ACTIVE UNITS · $7,912,162 INVENTORY · 56 MARKET DAY SUPPLY</div>
+  </div>
+
+  <!-- Stat strip — primary -->
+  <div class="stat-strip">
+    <div class="stat">
+      <div class="stat-label">Total VDPs</div>
+      <div class="stat-period">Month to Date</div>
+      <div class="stat-value">134,804</div>
+      <div class="stat-foot up">↑ 8% vs last month</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">VDP Pace</div>
+      <div class="stat-period">Daily Avg</div>
+      <div class="stat-value">5,184</div>
+      <div class="stat-foot up">↑ on track</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">VDPs / Vehicle</div>
+      <div class="stat-period">Month to Date</div>
+      <div class="stat-value">228</div>
+      <div class="stat-foot neutral">~ stable</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Front Line Ready</div>
+      <div class="stat-period">Right Now</div>
+      <div class="stat-value">147</div>
+      <div class="stat-foot down">↓ 12 from yesterday</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Sales / FLR Ratio</div>
+      <div class="stat-period">Month to Date</div>
+      <div class="stat-value">1.03</div>
+      <div class="stat-foot up">↑ above 1.0 target</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Sales Pace</div>
+      <div class="stat-period">Month to Date</div>
+      <div class="stat-value">151</div>
+      <div class="stat-foot neutral">3 yesterday</div>
+    </div>
+  </div>
+
+  <!-- Stat strip — secondary -->
+  <div class="stat-strip stat-strip-secondary">
+    <div class="stat">
+      <div class="stat-label">Total Active Inventory</div>
+      <div class="stat-period">Right Now</div>
+      <div class="stat-value">409</div>
+      <div class="stat-foot neutral">$7,912,162 invested</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Avg Days in Stock</div>
+      <div class="stat-period">Right Now</div>
+      <div class="stat-value">28<span style="font-size: 11px; color: var(--green); margin-left: 4px;">↓ 3d</span></div>
+      <div class="stat-foot up">improving week over week</div>
+    </div>
+    <div class="stat priority">
+      <div class="stat-label">Units Priced Below ICO</div>
+      <div class="stat-period">Right Now</div>
+      <div class="stat-value">3</div>
+      <div class="stat-foot down">$1,290 on the table</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Turn Rate</div>
+      <div class="stat-period">Annualized</div>
+      <div class="stat-value">8.2<span style="font-size: 11px; color: var(--green); margin-left: 4px;">↗</span></div>
+      <div class="stat-foot up">vs 7.5 target</div>
+    </div>
+  </div>
+
+  <!-- Main grid -->
+  <div class="grid">
+
+    <!-- Left column -->
+    <div class="left-col">
+
+      <!-- Today's Priorities -->
+      <div class="card priorities-card">
+        <div class="card-head">
+          <div class="card-title">Today's Priorities</div>
+          <div class="card-meta">5 of 23</div>
+        </div>
+        <div class="priorities-list">
+
+          <div class="priority-item">
+            <div class="priority-num">01</div>
+            <div class="priority-body">
+              <div class="priority-title">3 cars priced below your Vintryx ICO<span class="units">3 units · $1,290</span></div>
+              <div class="priority-desc">You'll make more wholesaling them to us. Average spread: $430/vehicle.</div>
+              <div class="priority-tags">
+                <span class="tag tag-high">ICO</span>
+                <span class="tag tag-high">High</span>
+                <span class="tag tag-data">⚡ Data-driven</span>
+              </div>
+            </div>
+            <div class="priority-actions">
+              <button class="btn-review">Review</button>
+              <button class="btn-disagree">I disagree</button>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">02</div>
+            <div class="priority-body">
+              <div class="priority-title">Reprice 5 aging sedans<span class="units">5 units · $2,150</span></div>
+              <div class="priority-desc">MDS rising 18% on 30 days, CRM silent 14 days. Drop 1.5–2.0% to reset visibility.</div>
+              <div class="priority-tags">
+                <span class="tag tag-high">Pricing</span>
+                <span class="tag tag-high">High</span>
+                <span class="tag tag-strategy">⚙️ Strategy-dependent</span>
+              </div>
+            </div>
+            <div class="priority-actions">
+              <button class="btn-review">Review</button>
+              <button class="btn-disagree">I disagree</button>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">03</div>
+            <div class="priority-body">
+              <div class="priority-title">Hold 2 aged F-150s<span class="units">2 units</span></div>
+              <div class="priority-desc">Demand remains strong. 8 leads each in 14 days. Don't reprice yet.</div>
+              <div class="priority-tags">
+                <span class="tag tag-med">CRM</span>
+                <span class="tag tag-med">Medium</span>
+                <span class="tag tag-strategy">⚙️ Strategy-dependent</span>
+              </div>
+            </div>
+            <div class="priority-actions">
+              <button class="btn-review">Review</button>
+              <button class="btn-disagree">I disagree</button>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">04</div>
+            <div class="priority-body">
+              <div class="priority-title">Exit 3 units retailing below ICO<span class="units">3 units · $1,140/day</span></div>
+              <div class="priority-desc">Losing $47/day in floor plan carrying cost. Wholesale recommended this week.</div>
+              <div class="priority-tags">
+                <span class="tag tag-high">ICO</span>
+                <span class="tag tag-high">High</span>
+                <span class="tag tag-data">⚡ Data-driven</span>
+              </div>
+            </div>
+            <div class="priority-actions">
+              <button class="btn-review">Review</button>
+              <button class="btn-disagree">I disagree</button>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">05</div>
+            <div class="priority-body">
+              <div class="priority-title">Inspect 2 vehicles<span class="units">2 units</span></div>
+              <div class="priority-desc">Appointments with zero conversions, no manager notes filed. Possible condition issues.</div>
+              <div class="priority-tags">
+                <span class="tag tag-med">CRM</span>
+                <span class="tag tag-med">Medium</span>
+                <span class="tag tag-human">📝 Human-noted</span>
+              </div>
+            </div>
+            <div class="priority-actions">
+              <button class="btn-review">Review</button>
+              <button class="btn-disagree">I disagree</button>
+            </div>
+          </div>
+
+        </div>
+        <div class="priorities-foot">
+          <a>↓ Show 18 more priorities</a>
+          <a>Configure ranking →</a>
+        </div>
+      </div>
+
+      <!-- Merchandise Quality -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">Merchandise Quality</div>
+          <div class="card-meta">customize</div>
+        </div>
+        <div class="checklist">
+          <div class="check-item">
+            <div class="check-label">
+              <span class="check-icon"></span>
+              No Internet Price
+            </div>
+            <span class="check-count warn">3</span>
+          </div>
+          <div class="check-item">
+            <div class="check-label">
+              <span class="check-icon"></span>
+              Stale Internet Price (7d+)
+            </div>
+            <span class="check-count warn">5</span>
+          </div>
+          <div class="check-item">
+            <div class="check-label">
+              <span class="check-icon"></span>
+              No Wholesale Price
+            </div>
+            <span class="check-count warn">2</span>
+          </div>
+          <div class="check-item">
+            <div class="check-label">
+              <span class="check-icon"></span>
+              Missing Photos
+            </div>
+            <span class="check-count warn">4</span>
+          </div>
+          <div class="check-item">
+            <div class="check-label">
+              <span class="check-icon"></span>
+              No Description
+            </div>
+            <span class="check-count warn">6</span>
+          </div>
+          <div class="check-item">
+            <div class="check-label">
+              <span class="check-icon zero"></span>
+              Front Line Ready
+            </div>
+            <span class="check-count zero">0</span>
+          </div>
+          <div class="check-item">
+            <div class="check-label">
+              <span class="check-icon"></span>
+              Slow Moving
+            </div>
+            <span class="check-count warn">17</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right column -->
+    <div class="right-col">
+
+      <!-- Stocking Health -->
+      <div class="card table-card">
+        <div class="card-head">
+          <div class="card-title">Stocking Health</div>
+          <div class="card-meta">by age bucket · stocking score</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Age</th>
+              <th>Count</th>
+              <th>Green</th>
+              <th>Yellow</th>
+              <th>Red</th>
+              <th>Below ICO</th>
+              <th>Zero Leads 14d</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>0–21 days</td>
+              <td>187</td>
+              <td><span class="pill pill-green">162</span></td>
+              <td><span class="pill pill-yellow">19</span></td>
+              <td><span class="pill pill-zero">0</span></td>
+              <td class="zero">0</td>
+              <td class="link">6</td>
+            </tr>
+            <tr>
+              <td>22–25 days</td>
+              <td>16</td>
+              <td><span class="pill pill-green">11</span></td>
+              <td><span class="pill pill-yellow">4</span></td>
+              <td><span class="pill pill-red">1</span></td>
+              <td class="zero">0</td>
+              <td class="link">2</td>
+            </tr>
+            <tr>
+              <td>26–45 days</td>
+              <td>101</td>
+              <td><span class="pill pill-green">38</span></td>
+              <td><span class="pill pill-yellow">52</span></td>
+              <td><span class="pill pill-red">11</span></td>
+              <td class="link">1</td>
+              <td class="link">14</td>
+            </tr>
+            <tr>
+              <td>46–70 days</td>
+              <td>49</td>
+              <td><span class="pill pill-green">9</span></td>
+              <td><span class="pill pill-yellow">22</span></td>
+              <td><span class="pill pill-red">18</span></td>
+              <td class="link">1</td>
+              <td class="link">9</td>
+            </tr>
+            <tr>
+              <td>71+ days</td>
+              <td>56</td>
+              <td><span class="pill pill-green">2</span></td>
+              <td><span class="pill pill-yellow">14</span></td>
+              <td><span class="pill pill-red">40</span></td>
+              <td class="link">1</td>
+              <td class="link">12</td>
+            </tr>
+            <tr class="total">
+              <td>Total</td>
+              <td>409</td>
+              <td><span class="pill pill-green">222</span></td>
+              <td><span class="pill pill-yellow">111</span></td>
+              <td><span class="pill pill-red">70</span></td>
+              <td class="link">3</td>
+              <td class="link">43</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tippability -->
+      <div class="card table-card">
+        <div class="card-head">
+          <div class="card-title">Front Line Ready & Tippability</div>
+          <div class="card-meta">tip threshold $500 · per platform</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Age</th>
+              <th>FLR / In Stock</th>
+              <th>CarGurus</th>
+              <th>AutoTrader</th>
+              <th>Carfax</th>
+              <th>Cars.com</th>
+              <th>Zero Leads</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>0–21 days</td>
+              <td>72 / 187</td>
+              <td class="link">38</td>
+              <td class="link">14</td>
+              <td class="link">22</td>
+              <td class="link">31</td>
+              <td class="link">52</td>
+            </tr>
+            <tr>
+              <td>22–25 days</td>
+              <td>14 / 16</td>
+              <td class="link">5</td>
+              <td class="link">2</td>
+              <td class="link">3</td>
+              <td class="link">4</td>
+              <td class="link">3</td>
+            </tr>
+            <tr>
+              <td>26–45 days</td>
+              <td>96 / 101</td>
+              <td class="link">28</td>
+              <td class="link">11</td>
+              <td class="link">18</td>
+              <td class="link">22</td>
+              <td class="link">19</td>
+            </tr>
+            <tr>
+              <td>46–70 days</td>
+              <td>48 / 49</td>
+              <td class="link">17</td>
+              <td class="link">7</td>
+              <td class="link">11</td>
+              <td class="link">14</td>
+              <td class="link">8</td>
+            </tr>
+            <tr>
+              <td>71+ days</td>
+              <td>56 / 56</td>
+              <td class="link">9</td>
+              <td class="link">4</td>
+              <td class="link">6</td>
+              <td class="link">8</td>
+              <td class="link">5</td>
+            </tr>
+            <tr class="total">
+              <td>Total</td>
+              <td>286 / 409</td>
+              <td class="link">97</td>
+              <td class="link">38</td>
+              <td class="link">60</td>
+              <td class="link">79</td>
+              <td class="link">87</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Investment & Markup -->
+      <div class="card table-card">
+        <div class="card-head">
+          <div class="card-title">Investment & Markup</div>
+          <div class="card-meta">by age bucket · live</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2">Age</th>
+              <th rowspan="2">Count</th>
+              <th colspan="4" class="group">Investment</th>
+              <th colspan="2" class="group">Markup</th>
+              <th rowspan="2">Adj % Mkt</th>
+              <th rowspan="2">MDS</th>
+            </tr>
+            <tr>
+              <th>Total</th>
+              <th>Inv %</th>
+              <th>Average</th>
+              <th>Adj. CTM</th>
+              <th>Total</th>
+              <th>Average</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>0–21 days</td>
+              <td>187</td>
+              <td>$3,769,088</td>
+              <td>48%</td>
+              <td>$20,156</td>
+              <td>88%</td>
+              <td>$64,986</td>
+              <td>$349</td>
+              <td>91%</td>
+              <td>55</td>
+            </tr>
+            <tr>
+              <td>22–25 days</td>
+              <td>16</td>
+              <td>$270,970</td>
+              <td>3%</td>
+              <td>$16,936</td>
+              <td>90%</td>
+              <td>$2,760</td>
+              <td>$172</td>
+              <td>91%</td>
+              <td>54</td>
+            </tr>
+            <tr>
+              <td>26–45 days</td>
+              <td>101</td>
+              <td>$1,918,343</td>
+              <td>24%</td>
+              <td>$18,994</td>
+              <td>92%</td>
+              <td class="neg">−$37,588</td>
+              <td class="neg">−$372</td>
+              <td>90%</td>
+              <td>51</td>
+            </tr>
+            <tr>
+              <td>46–70 days</td>
+              <td>49</td>
+              <td>$830,685</td>
+              <td>10%</td>
+              <td>$16,953</td>
+              <td>92%</td>
+              <td class="neg">−$12,838</td>
+              <td class="neg">−$262</td>
+              <td>90%</td>
+              <td>65</td>
+            </tr>
+            <tr>
+              <td>71+ days</td>
+              <td>56</td>
+              <td>$1,123,076</td>
+              <td>14%</td>
+              <td>$20,055</td>
+              <td>92%</td>
+              <td class="neg">−$39,432</td>
+              <td class="neg">−$704</td>
+              <td>88%</td>
+              <td>59</td>
+            </tr>
+            <tr class="total">
+              <td>Total</td>
+              <td>409</td>
+              <td>$7,912,162</td>
+              <td>100%</td>
+              <td>$19,345</td>
+              <td>90%</td>
+              <td class="neg">−$22,112</td>
+              <td class="neg">−$54</td>
+              <td>90%</td>
+              <td>56</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Rolling Window — full width -->
+  <div class="card rolling">
+    <div class="card-head">
+      <div class="card-title">Rolling Window — Sales by Body Type</div>
+      <div class="rolling-controls">
+        <select class="pill-select">
+          <option>30 days</option>
+          <option selected>60 days</option>
+          <option>90 days</option>
+        </select>
+        <span class="card-meta">click row to expand · customize categories</span>
+      </div>
+    </div>
+
+    <!-- Rolling totals summary -->
+    <div class="rolling-summary">
+      <div class="rolling-summary-cell">
+        <div class="rolling-summary-label">In Stock</div>
+        <div class="rolling-summary-value">409</div>
+        <div class="rolling-summary-foot">across all categories</div>
+      </div>
+      <div class="rolling-summary-cell">
+        <div class="rolling-summary-label">60-Day Pace</div>
+        <div class="rolling-summary-value">302 sold</div>
+        <div class="rolling-summary-foot">5.0 / day average</div>
+      </div>
+      <div class="rolling-summary-cell">
+        <div class="rolling-summary-label">Overage vs Pace</div>
+        <div class="rolling-summary-value">+107</div>
+        <div class="rolling-summary-foot over">overstocked at current sales rate</div>
+      </div>
+    </div>
+
+    <!-- Category rows -->
+    <div class="categories">
+
+      <div class="category-row" onclick="toggleCategory(this)">
+        <div class="category-toggle">▶</div>
+        <div class="category-name">Midsize SUV</div>
+        <div class="cat-value">98 in stock</div>
+        <div class="cat-value">76 sold</div>
+        <div class="cat-value">+22 over</div>
+        <div class="cat-value">29% of sales</div>
+        <div class="cat-bar"><div class="cat-bar-fill" style="width: 90%;"></div></div>
+      </div>
+      <div class="category-detail">
+        <div class="category-detail-grid">
+          <div class="detail-cell">
+            <div class="detail-vin">VIN ...4C7821</div>
+            <div class="detail-name">2022 Toyota RAV4 XLE</div>
+            <div class="detail-meta">$28,995 · 31 days · 14 leads</div>
+          </div>
+          <div class="detail-cell">
+            <div class="detail-vin">VIN ...9X4112</div>
+            <div class="detail-name">2021 Honda CR-V EX-L</div>
+            <div class="detail-meta">$26,500 · 47 days · 8 leads</div>
+          </div>
+          <div class="detail-cell">
+            <div class="detail-vin">VIN ...3B8847</div>
+            <div class="detail-name">2023 Mazda CX-5 Touring</div>
+            <div class="detail-meta">$29,800 · 12 days · 22 leads</div>
+          </div>
+          <div class="detail-cell">
+            <div class="detail-vin">VIN ...5T2204</div>
+            <div class="detail-name">2020 Ford Escape Titanium</div>
+            <div class="detail-meta">$22,400 · 71 days · 3 leads</div>
+          </div>
+        </div>
+        <div style="margin-top: 10px; text-align: right;">
+          <a style="color: var(--blue); cursor: pointer; font-size: 11px;">View all 98 vehicles in this category →</a>
+        </div>
+      </div>
+
+      <div class="category-row" onclick="toggleCategory(this)">
+        <div class="category-toggle">▶</div>
+        <div class="category-name">Sedan</div>
+        <div class="cat-value">87 in stock</div>
+        <div class="cat-value">64 sold</div>
+        <div class="cat-value">+23 over</div>
+        <div class="cat-value">21% of sales</div>
+        <div class="cat-bar"><div class="cat-bar-fill" style="width: 80%;"></div></div>
+      </div>
+
+      <div class="category-row" onclick="toggleCategory(this)">
+        <div class="category-toggle">▶</div>
+        <div class="category-name">Truck</div>
+        <div class="cat-value">71 in stock</div>
+        <div class="cat-value">68 sold</div>
+        <div class="cat-value">+3 over</div>
+        <div class="cat-value">23% of sales</div>
+        <div class="cat-bar"><div class="cat-bar-fill" style="width: 88%;"></div></div>
+      </div>
+
+      <div class="category-row" onclick="toggleCategory(this)">
+        <div class="category-toggle">▶</div>
+        <div class="category-name">Large SUV</div>
+        <div class="cat-value">62 in stock</div>
+        <div class="cat-value">42 sold</div>
+        <div class="cat-value">+20 over</div>
+        <div class="cat-value">14% of sales</div>
+        <div class="cat-bar"><div class="cat-bar-fill over" style="width: 65%;"></div></div>
+      </div>
+
+      <div class="category-row" onclick="toggleCategory(this)">
+        <div class="category-toggle">▶</div>
+        <div class="category-name">Coupe</div>
+        <div class="cat-value">38 in stock</div>
+        <div class="cat-value">26 sold</div>
+        <div class="cat-value">+12 over</div>
+        <div class="cat-value">9% of sales</div>
+        <div class="cat-bar"><div class="cat-bar-fill" style="width: 50%;"></div></div>
+      </div>
+
+      <div class="category-row" onclick="toggleCategory(this)">
+        <div class="category-toggle">▶</div>
+        <div class="category-name">Hatchback</div>
+        <div class="cat-value">29 in stock</div>
+        <div class="cat-value">14 sold</div>
+        <div class="cat-value">+15 over</div>
+        <div class="cat-value">5% of sales</div>
+        <div class="cat-bar"><div class="cat-bar-fill over" style="width: 35%;"></div></div>
+      </div>
+
+      <div class="category-row" onclick="toggleCategory(this)">
+        <div class="category-toggle">▶</div>
+        <div class="category-name">Van</div>
+        <div class="cat-value">17 in stock</div>
+        <div class="cat-value">9 sold</div>
+        <div class="cat-value">+8 over</div>
+        <div class="cat-value">3% of sales</div>
+        <div class="cat-bar"><div class="cat-bar-fill over" style="width: 22%;"></div></div>
+      </div>
+
+      <div class="category-row" onclick="toggleCategory(this)">
+        <div class="category-toggle">▶</div>
+        <div class="category-name">Convertible</div>
+        <div class="cat-value">7 in stock</div>
+        <div class="cat-value">3 sold</div>
+        <div class="cat-value">+4 over</div>
+        <div class="cat-value">1% of sales</div>
+        <div class="cat-bar"><div class="cat-bar-fill over" style="width: 8%;"></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footnote">
+    <span>VINTRYX · INVENTORY OVERVIEW · v0.1 PROTOTYPE</span>
+    <span>HAMPSTEAD PRE-OWNED · CONFIDENTIAL</span>
+  </div>
+
+</div>
+
+<script>
+  function toggleCategory(row) {
+    row.classList.toggle('open');
+    const detail = row.nextElementSibling;
+    if (detail && detail.classList.contains('category-detail')) {
+      detail.classList.toggle('open');
+    }
+  }
+</script>
+
+</body>
+</html>
